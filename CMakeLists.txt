@@ -18,5 +18,3 @@ include_directories(
 
 add_executable(track src/track.cpp)
 target_link_libraries(track ${catkin_LIBRARIES} ${OpenCV_LIBS})
-add_executable(kalman src/kalman.cpp)
-target_link_libraries(kalman ${catkin_LIBRARIES} ${OpenCV_LIBS})
