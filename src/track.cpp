@@ -5,7 +5,6 @@ const string video_path = "../data/test2.mp4";
 const float fps = 40.0f;
 const int t = static_cast<int>(1000/fps);
 const float IOU_THRESHOLD = 0.5;
-KalmanFilter_ kf;
 
 struct Bbox
 {
@@ -80,7 +79,7 @@ vector<Bbox> nms(const vector<Bbox> &bboxes, float iouThreshold = 0.3)
 
     vector<bool> keep(bboxes.size(), true);
 
-    for (size_t i = 0; i < scores.size(); i++)
+    for (int i = 0; i < scores.size(); i++)
     {
         int index = scores[i].first;
         if (!keep[index]) continue;
@@ -166,41 +165,6 @@ Mat resizeWithPadding(const Mat& img,Size targetSize)
     copyMakeBorder(resizedImage, paddedImage, top, bottom, left, right, cv::BORDER_CONSTANT, cv::Scalar(0, 0, 0));
 
     return paddedImage;
-}
-
-void kalmanLoader(vector<Bbox> &detections,float dt)
-{
-    if (detections.empty())
-    {
-        kf.predict();
-        if (kf.getPredictionsWithoutUpdate() > 5)
-        {
-            kf = KalmanFilter_();  // 重置滤波器
-        }
-    }
-    else
-    {
-        for (auto &detection : detections)
-        {
-            // 计算中心点、宽高
-            float cx = (detection.x1 + detection.x2) / 2;
-            float cy = (detection.y1 + detection.y2) / 2;
-            float w = detection.x2 - detection.x1;
-            float h = detection.y2 - detection.y1;
-
-            // 调用卡尔曼滤波
-            kf.setF(dt);
-            kf.predict();
-            kf.update(Eigen::Vector4f(cx, cy, w, h));
-
-            // 更新框坐标
-            Eigen::Vector4f state = kf.getPosition();
-            detection.x1 = state[0] - state[2]/2.0f;
-            detection.y1 = state[1] - state[3]/2.0f;
-            detection.x2 = state[0] + state[2]/2.0f;
-            detection.y2 = state[1] + state[3]/2.0f;
-        }
-    }
 }
 
 /* 逻辑：
@@ -397,7 +361,6 @@ int main()
             detections.insert(detections.end(), currentBoxes.begin(), currentBoxes.end());
         }
 
-        //kalmanLoader(detections,dt);
         vector<pair<int,int>> matches;
         vector<int> unmatched_tracks, unmatched_detections;
         hungarianLoader(detections,tracks,matches,unmatched_tracks,unmatched_detections, dt);
@@ -412,12 +375,10 @@ int main()
 
             if (track.confirmed)
             {
-                rectangle(img, Point(x1,y1), Point(x2,y2), Scalar(0,255,0), 2);
-                putText(img, "ID:"+to_string(track.id), Point(x1,y1-10),FONT_HERSHEY_SIMPLEX, 0.5, Scalar(0,255,0), 2);
+                rectangle(img, Point2f(x1,y1), Point2f(x2,y2), Scalar(0,255,0), 2);
+                putText(img, "ID:"+to_string(track.id), Point2f(x1,y1-10),FONT_HERSHEY_SIMPLEX, 0.5, Scalar(0,255,0), 2);
             }
         }
-
-        //drawBoxes(img,detections);
 
         imshow("img", img);
         waitKey(t);
