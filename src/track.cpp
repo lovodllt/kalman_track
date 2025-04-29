@@ -205,8 +205,7 @@ void hungarianLoader(const vector<Bbox> &detections, vector<Track>& tracks, vect
 
     for(auto& track : tracks)
     {
-        track.kf.setF(dt);
-        track.kf.predict();
+        track.kf.predict(dt);
     }
 
     // 计算cost矩阵(当track与detection的IoU大于阈值时，视为匹配)

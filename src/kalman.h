@@ -29,7 +29,6 @@ private:
     Eigen::Matrix<float,4,8> H;//观测矩阵
     float dt;
     bool is_init = false;
-    int predictions_without_update = 0;
 
 public:
     KalmanFilter_() : dt(0.01)
@@ -76,12 +75,13 @@ public:
     }
 
     // 预测
-    void predict()
+    void predict(float dt)
     {
         if(!is_init) return;
+
+        setF(dt);
         x = F * x;
         P = F * P * F.transpose() + Q;
-        predictions_without_update++;
     }
 
     // 更新
@@ -95,7 +95,6 @@ public:
 
         x = x + K * y;
         P = (Matrix8f::Identity() - K * H) * P;
-        predictions_without_update = 0;
     }
 
     // 获取当前位置
@@ -103,8 +102,6 @@ public:
     {
         return x.head<4>();
     }
-
-    int getPredictionsWithoutUpdate() const { return predictions_without_update; }
 };
 
 class HungarianAlgorithm{
