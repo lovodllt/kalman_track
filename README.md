@@ -1,6 +1,14 @@
-# **目标跟踪算法实现**
+# **卡尔曼滤波与目标跟踪算法实现**
+
+[TOC]
 
 代码实现：https://github.com/lovodllt/kalman_track
+
+(这里用的是ros的工作空间，需要使用的记得修改cmakelist)
+
+对于短暂被遮挡物体的识别效果
+
+![](./picture/SunnyCapturer2025-05-02_17-05-25.png)
 
 ## **卡尔曼滤波**（KF）
 
@@ -133,7 +141,7 @@ $$
 &H: 观测矩阵H\\
 \end{align*}
 $$
-##### **协方差更新公式**
+##### 协方差更新公式
 
 $$
 \Large
@@ -496,7 +504,7 @@ $$
 1. 每一行减去该行最小值
 2. 每一列减去该列最小值
 
-<img src="./picture/SunnyCapturer2025-04-26_16-02-09.jpg" alt="微信图片_20250426155518_121" style="zoom:33%;" /><img src="./picture/SunnyCapturer2025-04-26_15-56-00.png" alt="SunnyCapturer2025-04-26_15-56-00" style="zoom: 33%;" />
+<img src="./picture/微信图片_20250426155518_121.jpg" alt="微信图片_20250426155518_121" style="zoom:33%;" /><img src="./picture/SunnyCapturer2025-04-26_15-56-00.png" alt="SunnyCapturer2025-04-26_15-56-00" style="zoom: 33%;" />
 
 接着进入循环
 
