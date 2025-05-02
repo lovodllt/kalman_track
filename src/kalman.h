@@ -41,10 +41,10 @@ public:
 
         //初始化过程噪声协方差矩阵
         Q = Matrix8f::Zero(8,8);
-        Q.diagonal() << 1.0, 1.0, 1.0, 1.0, 2.0, 2.0, 2.0, 2.0;
+        Q.diagonal() << 1e-2, 1e-2, 1e-2, 2e-2, 5e-2, 5e-2, 1e-4, 4e-2;
 
         //初始化观测噪声协方差矩阵
-        R = Eigen::Matrix4f::Identity() * 0.01;
+        R = Eigen::Matrix4f::Identity() * (1e-2);
 
         //初始化误差协方差
         P = Matrix8f::Identity() * 10;
@@ -66,6 +66,12 @@ public:
              0, 0, 0, 0, 0,  1,  0,  0,
              0, 0, 0, 0, 0,  0,  1,  0,
              0, 0, 0, 0, 0,  0,  0,  1;
+
+        Vector8f new_x = x;
+        x[0] = new_x[0] + new_x[4] * dt;
+        x[1] = new_x[1] + new_x[5] * dt;
+        x[2] = new_x[2] + new_x[6] * dt;
+        x[3] = new_x[3] + new_x[7] * dt;
     }
 
     void init(const Eigen::Vector4f& z)
