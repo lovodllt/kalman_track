@@ -16,11 +16,32 @@
 
 ![](./picture/SunnyCapturer2025-04-21_19-45-40.png)
 
-#### **预测（Prediction）：**
+#### **观测（observation）**
 
-#### 状态预测公式
+$$
+\Large
+z_t=Hx_t+v_k
+$$
 
-#####                                              ![SunnyCapturer2025-04-21_19-53-39](./picture/SunnyCapturer2025-04-21_19-53-39.png)
+各参数含义：
+$$
+\large
+\begin{align*}
+&z_t:当前时刻(t)的观测值\\
+&H : 观测矩阵H\\
+&x_t:当前时刻(t)的真实状态向量\\
+&v_k:观测噪声
+\end{align*}
+$$
+
+#### **预测（Prediction）**
+
+##### 状态预测公式
+
+$$
+\Large
+\hat{x}_t^{-}=F\hat{x}_{t - 1}+Bu_{t - 1}
+$$
 
 根据上一时刻（t - 1）的状态估计值来预测当前时刻（ t ）的状态
 
@@ -30,16 +51,24 @@
 
 各参数含义：
 
-- ^x(t)- : 当前时刻（ t ）的先验姿态估计（预测值）
-- F : 状态转移矩阵 F
-- ^x(t - 1) : 上一时刻（t - 1）的后验状态估计（最优估计值）
-- B : 控制矩阵 B
-- u(t - 1) : 上一时刻（t - 1）的控制输入
-- W(t) : 过程噪声
+$$
+\large
+\begin{align*}
+&\hat{x}_t^-:当前时刻(t)的先验姿态估计(预测值)\\
+&F:状态转移矩阵 F\\
+&\hat{x}_{t-1}:上一时刻(t-1)的后验状态估计(最优估计值)\\
+&B:控制矩阵 B\\
+&u_{t-1}:上一时刻（t - 1）的控制输入
+\end{align*}
+$$
+
 
 ##### 协方差预测公式
 
-![SunnyCapturer2025-04-21_20-04-28](./picture/SunnyCapturer2025-04-21_20-04-28.png)
+$$
+\Large
+P_t^−=FP_{t−1} F^T+Q
+$$
 
 衡量变量的总体误差
 
@@ -50,58 +79,81 @@
 根据上一时刻（t - 1）的状态协方差矩阵来预测当前时刻的状态协方差
 
 各参数含义：
+$$
+\large
+\begin{align*}
+&P_t^-:当前时刻(t)的先验估计协方差矩阵(预测值)\\
+&F:状态转移矩阵\\
+&P_{t-1}:上一时刻(t-1)的后验估计协方差矩阵(最优估计值)\\
+&F^T : 状态转移矩阵 F 的转置\\
+&Q:过程噪声协方差矩阵
+\end{align*}
+$$
 
-- P(t) : 当前时刻（ t ）的先验状态协方差（预测值）
-- F : 状态转移矩阵F
-- P(t - 1) : 上一时刻（t - 1）的后验状态估计（最优估计值）
-- F^T : 状态转移矩阵 F 的转置
-- Q : 过程噪声协方差矩阵 Q
-
-#### **更新（Update）：**
+#### **更新（Update）**
 
 ##### 卡尔曼增益公式
 
-![SunnyCapturer2025-04-21_20-18-09](./picture/SunnyCapturer2025-04-21_20-18-09.png)
+$$
+\Large
+K_t=P_t^−H^T(HP_t^−H^T+R)^{−1}
+$$
 
 用于确定在更新状态估计时，测量值所占的比重。
 
 各参数含义：
 
-- K(t) : 当前时刻（t）的卡尔曼增益（估计值权重）
-- P(t)- : 当前时刻（t）的先验状态协方差（预测值）
-- H : 观测矩阵H
-- H^T : 观测矩阵 H 的转置
-- R : 测量噪声协方差矩阵R
+$$
+\large
+\begin{align*}
+&K_t: 当前时刻(t)的卡尔曼增益(估计值权重)\\
+&P_t^−: 当前时刻(t)的先验状态协方差(预测值)\\
+&H : 观测矩阵H\\
+&R : 测量噪声协方差矩阵R
+\end{align*}
+$$
 
 ##### 状态更新公式
 
-![SunnyCapturer2025-04-21_20-18-17](./picture/SunnyCapturer2025-04-21_20-18-17.png)
+$$
+\Large
+\hat{x}_t= \hat{x}_t^−+K_t(z_t−H \hat{x}_t^−)
+$$
 
 结合预测状态和当前时刻的测量值来得到当前时刻的最优状态估计
 
 各参数含义：
+$$
+\large
+\begin{align*}
+&\hat{x}_t: 当前时刻(t)的后验状态估计(最优估计值)\\
+&\hat{x}_t^-: 当前时刻(t)的先验状态估计(预测值)\\
+&K_t: 当前时刻(t)的卡尔曼增益\\
+&z_t: 当前时刻(t)的测量值\\
+&H: 观测矩阵H\\
+\end{align*}
+$$
+##### **协方差更新公式**
 
-- x^t : 当前时刻（t）的后验状态估计（最优估计值）
-- x^t- : 当前时刻（t）的先验状态估计（预测值）
-- Kt : 当前时刻（t）的卡尔曼增益
-- zt : 当前时刻（t）的测量值
-- H : 观测矩阵H
-
-##### 协方差更新公式
-
-![SunnyCapturer2025-04-21_20-18-26](./picture/SunnyCapturer2025-04-21_20-18-26.png)
-
+$$
+\Large
+P_t=(I−K_tH)P_t^−
+$$
 根据卡尔曼增益和先验状态协方差来更新当前时刻的状态协方差
 
 各参数含义：
+$$
+\large
+\begin{align*}
+&P_t:当前时刻(t)的后验状态协方差(最优值)\\
+&I:单位矩阵\\
+&K_t: 当前时刻(t)的卡尔曼增益(估计值权重)\\
+&H: 观测矩阵\\
+&P_t^-:当前时刻(t)的先验状态协方差(预测值)
+\end{align*}
+$$
 
-- P(t) : 当前时刻（t）的后验状态协方差（最优值）
-- I : 单位矩阵I
-- K(t) : 当前时刻（t）的卡尔曼增益
-- H : 观测矩阵H
-- P(t)- : 当前时刻（t）的先验状态协方差（预测值）  
-
-### **实例（追踪）**
+### **实例**
 
 需要考虑的状态：
 
@@ -114,9 +166,7 @@
 ### **代码实现**
 
 ```
-typedef Eigen::Matrix<float, 8, 1> Vector8f;
-typedef Eigen::Matrix<float, 8, 8> Matrix8f;
-
+class KalmanFilter_ {
 /* x = [x,
  *      y,
  *      w,
@@ -126,8 +176,6 @@ typedef Eigen::Matrix<float, 8, 8> Matrix8f;
  *      vw,
  *      vh]
  */
-
-class KalmanFilter_ {
 private:
     Vector8f x;//状态向量
     Matrix8f F;//状态转移矩阵
@@ -138,7 +186,6 @@ private:
     Eigen::Matrix<float,4,8> H;//观测矩阵
     float dt;
     bool is_init = false;
-    int predictions_without_update = 0;
 
 public:
     KalmanFilter_() : dt(0.01)
@@ -151,10 +198,112 @@ public:
 
         //初始化过程噪声协方差矩阵
         Q = Matrix8f::Zero(8,8);
-        Q.diagonal() << 0.1, 0.1, 0.1, 0.1, 0.5, 0.5, 0.5, 0.5;
+        Q.diagonal() << 1e-2, 1e-2, 1e-2, 2e-2, 5e-2, 5e-2, 1e-4, 4e-2;
 
         //初始化观测噪声协方差矩阵
-        R = Eigen::Matrix4f::Identity() * 1.0;
+        R = Eigen::Matrix4f::Identity() * (1e-2);
+
+        //初始化误差协方差
+        P = Matrix8f::Identity() * 10;
+
+        //初始化观测矩阵
+        H << 1, 0, 0, 0, 0, 0, 0, 0,
+             0, 1, 0, 0, 0, 0, 0, 0,
+             0, 0, 1, 0, 0, 0, 0, 0,
+             0, 0, 0, 1, 0, 0, 0, 0;
+    }
+
+    void setF(float dt)
+    {
+        F << 1, 0, 0, 0, dt, 0,  0,  0,
+             0, 1, 0, 0, 0,  dt, 0,  0,
+             0, 0, 1, 0, 0,  0,  dt, 0,
+             0, 0, 0, 1, 0,  0,  0,  dt,
+             0, 0, 0, 0, 1,  0,  0,  0,
+             0, 0, 0, 0, 0,  1,  0,  0,
+             0, 0, 0, 0, 0,  0,  1,  0,
+             0, 0, 0, 0, 0,  0,  0,  1;
+
+        Vector8f new_x = x;
+        x[0] = new_x[0] + new_x[4] * dt;
+        x[1] = new_x[1] + new_x[5] * dt;
+        x[2] = new_x[2] + new_x[6] * dt;
+        x[3] = new_x[3] + new_x[7] * dt;
+    }
+
+    void init(const Eigen::Vector4f& z)
+    {
+        x.head<4>() = z;
+        is_init = true;
+    }
+
+    // 预测
+    void predict(float dt)
+    {
+        if(!is_init) return;
+
+        setF(dt);
+        x = F * x;
+        P = F * P * F.transpose() + Q;
+    }
+
+    // 更新
+    void update(const Eigen::Vector4f& z)
+    {
+        if(!is_init) init(z);
+
+        auto y = z - H * x;
+        auto S = H * P * H.transpose() + R;
+        K = P * H.transpose() * S.inverse();
+
+        x = x + K * y;
+        P = (Matrix8f::Identity() - K * H) * P;
+    }
+
+    // 获取当前位置
+    Eigen::Vector4f getPosition()
+    {
+        return x.head<4>();
+    }
+};typedef Eigen::Matrix<float, 8, 1> Vector8f;
+typedef Eigen::Matrix<float, 8, 8> Matrix8f;
+
+class KalmanFilter_ {
+/* x = [x,
+ *      y,
+ *      w,
+ *      h,
+ *      vx,
+ *      vy,
+ *      vw,
+ *      vh]
+ */
+private:
+    Vector8f x;//状态向量
+    Matrix8f F;//状态转移矩阵
+    Matrix8f P;//误差协方差矩阵
+    Matrix8f Q;//过程噪声协方差矩阵
+    Eigen::Matrix4f R;//观测噪声协方差矩阵
+    Eigen::Matrix<float,8,4> K;//卡尔曼增益
+    Eigen::Matrix<float,4,8> H;//观测矩阵
+    float dt;
+    bool is_init = false;
+
+public:
+    KalmanFilter_() : dt(0.01)
+    {
+        //初始化状态向量
+        x << 0, 0, 0, 0, 0, 0, 0, 0;
+
+        //初始化状态转移矩阵
+        F = Matrix8f::Identity();
+
+        //初始化过程噪声协方差矩阵
+        Q = Matrix8f::Zero(8,8);
+        Q.diagonal() << 1.0, 1.0, 1.0, 1.0, 2.0, 2.0, 2.0, 2.0;
+
+        //初始化观测噪声协方差矩阵
+        R = Eigen::Matrix4f::Identity() * 0.01;
 
         //初始化误差协方差
         P = Matrix8f::Identity() * 10;
@@ -185,12 +334,13 @@ public:
     }
 
     // 预测
-    void predict()
+    void predict(float dt)
     {
         if(!is_init) return;
+
+        setF(dt);
         x = F * x;
         P = F * P * F.transpose() + Q;
-        predictions_without_update++;
     }
 
     // 更新
@@ -204,7 +354,6 @@ public:
 
         x = x + K * y;
         P = (Matrix8f::Identity() - K * H) * P;
-        predictions_without_update = 0;
     }
 
     // 获取当前位置
@@ -212,14 +361,129 @@ public:
     {
         return x.head<4>();
     }
-
-    int getPredictionsWithoutUpdate() const { return predictions_without_update; }
 };
 ```
 
 ## 扩展卡尔曼滤波（EKF）
 
-可应用于非线性环境
+可应用于非线性环境。相较于卡尔曼滤波，状态向量中可以引入加速度，旋转等非线性内容
+
+通过对状态转移矩阵和观测矩阵进行求导降阶，实现对非线性函数进行线性化近拟
+
+### **公式部分**
+
+#### **观测（Observation）**
+
+$$
+\Large
+z_t=H(x_t)+Q
+$$
+
+各参数含义：
+$$
+\large
+\begin{align*}
+&z_t:当前时刻(t)的观测值\\
+&H(-):观测函数，非线性函数\\
+&x_t: 当前时刻(t)的真实状态向量\\
+&Q: 观测噪声
+\end{align*}
+$$
+
+#### **预测（Prediction）**
+
+##### 状态预测公式
+
+$$
+\Large
+\hat{x}_t^-=f(\hat{x}_{t−1},u_t)
+$$
+
+各参数含义：
+$$
+\large
+\begin{align*}
+&\hat{x}_t^-:当前时刻(t)的先验姿态估计(预测值)\\
+&f(-):非线性函数，描述了系统状态如何从t-1时刻转移到t时刻\\
+&\hat{x}_t:上一时刻(t-1)的后验状态估计(最优估计值)
+\end{align*}
+$$
+
+##### 协方差预测公式
+
+$$
+\Large
+P_t^-=F_tP_{t-1}F_t^T+Q
+$$
+
+各参数含义：
+$$
+\large
+\begin{align*}
+&P_t^-:当前时刻(t)的先验估计协方差矩阵\\
+&F_t:状态转移矩阵在\hat{x}_t^-处的雅可比矩阵\\
+&P_{t-1}:上一时刻(t-1)的后验估计协方差矩阵\\
+&Q:过程噪声协方差矩阵
+\end{align*}
+$$
+
+#### **更新（Update）**
+
+##### 卡尔曼增益公式
+
+$$
+\Large
+K_t=P_t^−H_t^T(H_tP_t^−H_t^T+R)^{−1}
+$$
+
+各参数含义：
+$$
+\large
+\begin{align*}
+&K_t: 当前时刻(t)的卡尔曼增益(估计值权重)\\
+&P_t^−: 当前时刻(t)的先验状态协方差(预测值)\\
+&H_t: 观测函数H在\hat{x}_{t}^{-}处的雅克比矩阵\\
+&R : 测量噪声协方差矩阵R
+\end{align*}
+$$
+
+##### 状态更新公式
+
+$$
+\Large
+\hat{x}_t= \hat{x}_t^−+K_t(z_t−H(\hat{x}_t^−))
+$$
+
+各参数含义：
+$$
+\large
+\begin{align*}
+&\hat{x}_t: 当前时刻(t)的后验状态估计(最优估计值)\\
+&\hat{x}_t^-: 当前时刻(t)的先验状态估计(预测值)\\
+&K_t: 当前时刻(t)的卡尔曼增益\\
+&z_t: 当前时刻(t)的测量值\\
+&H: 观测矩阵H(x)在t时刻先验状态估计值\hat{x}_t^-处的计算结果\\
+\end{align*}
+$$
+
+##### 协方差更新公式
+
+$$
+\Large
+P_t=(I−K_tH_t)P_t^−
+$$
+
+各参数含义：
+$$
+\large
+\begin{align*}
+&P_t:当前时刻(t)的后验状态协方差(最优值)\\
+&I:单位矩阵\\
+&K_t: 当前时刻(t)的卡尔曼增益(估计值权重)\\
+&H_t: 观测函数H在\hat{x}_{t}^{-}处的雅克比矩阵\\
+&P_t^-:当前时刻(t)的先验状态协方差(预测值)
+\end{align*}
+$$
 
 ## **匈牙利算法**
 
@@ -232,7 +496,7 @@ public:
 1. 每一行减去该行最小值
 2. 每一列减去该列最小值
 
-<img src="./picture/微信picture_20250426155518_121.jpg" alt="微信picture_20250426155518_121" style="zoom:33%;" /><img src="./picture/SunnyCapturer2025-04-26_15-56-00.png" alt="SunnyCapturer2025-04-26_15-56-00" style="zoom: 33%;" />
+<img src="./picture/SunnyCapturer2025-04-26_16-02-09.jpg" alt="微信图片_20250426155518_121" style="zoom:33%;" /><img src="./picture/SunnyCapturer2025-04-26_15-56-00.png" alt="SunnyCapturer2025-04-26_15-56-00" style="zoom: 33%;" />
 
 接着进入循环
 
@@ -269,7 +533,6 @@ public:
 
         return assignment;
     }
-
 private:
     /*逻辑：
      * 1. 遍历每个跟踪器，对每个跟踪器，遍历每个检测框
@@ -277,7 +540,6 @@ private:
      * 3. 如果检测框j已被匹配，则递归调用dfs函数，尝试寻找其他匹配
      * 4. 如果找到匹配，则返回true，否则返回false
      */
-
     //深度优先搜索匹配跟踪器和检测框
     bool dfs(int i, const MatrixXb& cost_matrix, Eigen::VectorXi& assignment, Eigen::VectorXi& visited)
     {
@@ -331,3 +593,5 @@ Detection为预测到的框，Tracks为本次检测到的物体。
 ### **级联匹配**
 
 ![SunnyCapturer2025-04-24_19-15-38](./picture/SunnyCapturer2025-04-24_19-15-38.png)
+
+按照丢失的帧率，由少到多排序进行匹配

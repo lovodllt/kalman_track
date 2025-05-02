@@ -372,6 +372,11 @@ int main()
             float x2 = pos[0]+pos[2]/2;
             float y2 = pos[1]+pos[3]/2;
 
+            x1 = max(0.0f, min(x1, static_cast<float>(img.cols)));
+            y1 = max(0.0f, min(y1, static_cast<float>(img.rows)));
+            x2 = max(0.0f, min(x2, static_cast<float>(img.cols)));
+            y2 = max(0.0f, min(y2, static_cast<float>(img.rows)));
+
             if (track.confirmed)
             {
                 rectangle(img, Point2f(x1,y1), Point2f(x2,y2), Scalar(0,255,0), 2);
